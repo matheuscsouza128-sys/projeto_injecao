@@ -1,35 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apontamento de Produção</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #ffffff;
+            padding: 24px 18px 32px;
+        }
+
+        .topo {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            padding: 20px 18px;
+            border-radius: 18px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+        }
+
+        .topo h1 {
+            margin: 0;
+            font-size: 1.9rem;
+        }
+
+        .topo p {
+            margin: 8px 0 0;
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            margin-bottom: 18px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        .status {
+            background: #ecfeff;
+            color: #155e75;
+            border: 1px solid #a5f3fc;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .acoes {
+            display: grid;
+            gap: 14px;
+        }
+
+        .acoes button {
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+            transition: transform 0.08s ease, opacity 0.2s ease;
+        }
+
+        .acoes button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-inicio {
+            background: #16a34a;
+        }
+
+        .btn-fim {
+            background: #dc2626;
+        }
+
+        .btn-intercorrencia {
+            background: #f59e0b;
+            color: #111827;
+        }
+
+        .btn-nc {
+            background: #374151;
+        }
+
+        .rodape {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 24px;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="topo">
+            <h1>Máquina {{ maquina }}</h1>
+            <p>Apontamento de produção</p>
+        </div>
 
-    <h2>Máquina {{ maquina }}</h2>
-    <h3>Selecione o operador e a ação:</h3>
+        {% if status %}
+            <div class="status">
+                ✔ Último registro: {{ status }}
+            </div>
+        {% endif %}
 
-    {% if status %}
-        <p><strong>Último registro:</strong> {{ status }}</p>
-    {% endif %}
+        <form action="/registrar" method="post">
+            <input type="hidden" name="maquina" value="{{ maquina }}">
 
-    <form action="/registrar" method="post">
-        <input type="hidden" name="maquina" value="{{ maquina }}">
+            <div class="card">
+                <label for="operador" class="label">Operador</label>
+                <select name="operador" id="operador" required>
+                    <option value="">Selecione o operador</option>
+                    <option value="João">João</option>
+                    <option value="Maria">Maria</option>
+                    <option value="Carlos">Carlos</option>
+                </select>
+            </div>
 
-        <label for="operador"><strong>Operador:</strong></label>
-        <select name="operador" id="operador" required>
-            <option value="">Selecione</option>
-            <option value="João">João</option>
-            <option value="Maria">Maria</option>
-            <option value="Carlos">Carlos</option>
-        </select>
+            <div class="acoes">
+                <button type="submit" name="tipo" value="Início de Produção" class="btn-inicio">
+                    INICIAR PRODUÇÃO
+                </button>
 
-        <br><br>
+                <button type="submit" name="tipo" value="Fim de Produção" class="btn-fim">
+                    FINALIZAR PRODUÇÃO
+                </button>
 
-        <button type="submit" name="tipo" value="Início de Produção">INICIAR PRODUÇÃO</button>
-        <button type="submit" name="tipo" value="Fim de Produção">FINALIZAR PRODUÇÃO</button>
-        <button type="submit" name="tipo" value="Intercorrência">INTERCORRÊNCIA</button>
-        <button type="submit" name="tipo" value="Não Conformidade">NÃO CONFORMIDADE</button>
-    </form>
+                <button type="submit" name="tipo" value="Intercorrência" class="btn-intercorrencia">
+                    INTERCORRÊNCIA
+                </button>
 
+                <button type="submit" name="tipo" value="Não Conformidade" class="btn-nc">
+                    NÃO CONFORMIDADE
+                </button>
+            </div>
+        </form>
+
+        <div class="rodape">
+            Sistema de apontamento de produção
+        </div>
+    </div>
 </body>
 </html>
