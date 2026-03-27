@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apontamento de Produção</title>
+</head>
+<body>
+
+    <h2>Máquina {{ maquina }}</h2>
+    <h3>Selecione uma ação:</h3>
+
+    <form action="/registrar" method="post">
+        <input type="hidden" name="maquina" value="{{ maquina }}">
+        <input type="hidden" name="tipo" value="Início de Produção">
+        <button type="submit">INICIAR PRODUÇÃO</button>
+    </form>
+
+    <br>
+
+    <form action="/registrar" method="post">
+        <input type="hidden" name="maquina" value="{{ maquina }}">
+        <input type="hidden" name="tipo" value="Fim de Produção">
+        <button type="submit">FINALIZAR PRODUÇÃO</button>
+    </form>
+
+    <br>
+
+    <form action="/registrar" method="post">
+        <input type="hidden" name="maquina" value="{{ maquina }}">
+        <input type="hidden" name="tipo" value="Intercorrência">
+        <button type="submit">INTERCORRÊNCIA</button>
+    </form>
+
+    <br>
+
+    <form action="/registrar" method="post">
+        <input type="hidden" name="maquina" value="{{ maquina }}">
+        <input type="hidden" name="tipo" value="Não Conformidade">
+        <button type="submit">NÃO CONFORMIDADE</button>
+    </form>
+
+</body>
+</html>
