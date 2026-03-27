@@ -6,7 +6,7 @@
 <body>
 
     <h2>Máquina {{ maquina }}</h2>
-    <h3>Selecione uma ação:</h3>
+    <h3>Selecione o operador e a ação:</h3>
 
     {% if status %}
         <p><strong>Último registro:</strong> {{ status }}</p>
@@ -14,32 +14,21 @@
 
     <form action="/registrar" method="post">
         <input type="hidden" name="maquina" value="{{ maquina }}">
-        <input type="hidden" name="tipo" value="Início de Produção">
-        <button type="submit">INICIAR PRODUÇÃO</button>
-    </form>
 
-    <br>
+        <label for="operador"><strong>Operador:</strong></label>
+        <select name="operador" id="operador" required>
+            <option value="">Selecione</option>
+            <option value="João">João</option>
+            <option value="Maria">Maria</option>
+            <option value="Carlos">Carlos</option>
+        </select>
 
-    <form action="/registrar" method="post">
-        <input type="hidden" name="maquina" value="{{ maquina }}">
-        <input type="hidden" name="tipo" value="Fim de Produção">
-        <button type="submit">FINALIZAR PRODUÇÃO</button>
-    </form>
+        <br><br>
 
-    <br>
-
-    <form action="/registrar" method="post">
-        <input type="hidden" name="maquina" value="{{ maquina }}">
-        <input type="hidden" name="tipo" value="Intercorrência">
-        <button type="submit">INTERCORRÊNCIA</button>
-    </form>
-
-    <br>
-
-    <form action="/registrar" method="post">
-        <input type="hidden" name="maquina" value="{{ maquina }}">
-        <input type="hidden" name="tipo" value="Não Conformidade">
-        <button type="submit">NÃO CONFORMIDADE</button>
+        <button type="submit" name="tipo" value="Início de Produção">INICIAR PRODUÇÃO</button>
+        <button type="submit" name="tipo" value="Fim de Produção">FINALIZAR PRODUÇÃO</button>
+        <button type="submit" name="tipo" value="Intercorrência">INTERCORRÊNCIA</button>
+        <button type="submit" name="tipo" value="Não Conformidade">NÃO CONFORMIDADE</button>
     </form>
 
 </body>
