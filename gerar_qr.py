@@ -1,10 +1,11 @@
 import qrcode
 
-# Quantidade de máquinas (ajusta depois)
+base_url = "https://projeto-injecao.onrender.com"
+
 for i in range(1, 11):
-    url = f"http://127.0.0.1:5000/maquina/{i}"
+    url = f"{base_url}/maquina/{i}"
     
     img = qrcode.make(url)
     img.save(f"qr_maquina_{i}.png")
 
-print("QR Codes gerados com sucesso!")
+print("QR Codes atualizados!")

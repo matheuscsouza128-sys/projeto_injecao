@@ -8,6 +8,10 @@
     <h2>Máquina {{ maquina }}</h2>
     <h3>Selecione uma ação:</h3>
 
+    {% if status %}
+        <p><strong>Último registro:</strong> {{ status }}</p>
+    {% endif %}
+
     <form action="/registrar" method="post">
         <input type="hidden" name="maquina" value="{{ maquina }}">
         <input type="hidden" name="tipo" value="Início de Produção">

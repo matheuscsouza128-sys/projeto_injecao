@@ -23,16 +23,16 @@ def criar_banco():
     conn.commit()
     conn.close()
 
-# cria o banco também quando o app for iniciado pelo gunicorn no Render
 criar_banco()
 
 @app.route('/')
 def index():
-    return render_template('index.html', maquina="")
+    return render_template('index.html', maquina="", status="")
 
 @app.route('/maquina/<id_maquina>')
 def maquina(id_maquina):
-    return render_template('index.html', maquina=id_maquina)
+    status = request.args.get("status", "")
+    return render_template('index.html', maquina=id_maquina, status=status)
 
 @app.route('/registrar', methods=['POST'])
 def registrar():
@@ -53,7 +53,7 @@ def registrar():
     conn.commit()
     conn.close()
 
-    return redirect(f'/maquina/{maquina}')
+    return redirect(f'/maquina/{maquina}?status={tipo}')
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
