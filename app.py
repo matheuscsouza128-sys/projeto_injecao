@@ -61,6 +61,18 @@ def registrar():
     # 🔹 Redireciona com confirmação
     return redirect(f'/maquina/{maquina}?status={tipo}')
 
+@app.route('/historico')
+def historico():
+    conn = sqlite3.connect('banco.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT maquina, operador, tipo, data_hora FROM apontamentos ORDER BY id DESC')
+    dados = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('historico.html', dados=dados)
+
 # 🔹 Rodar aplicação
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
