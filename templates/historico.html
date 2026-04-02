@@ -83,6 +83,15 @@
             font-style: italic;
         }
 
+        .duracao {
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #ecfeff;
+            color: #155e75;
+            font-weight: bold;
+        }
+
         select, button {
             width: 100%;
             padding: 12px;
@@ -187,6 +196,12 @@
                 {% endif %}
 
                 <div class="linha">{{ item[4] }}</div>
+
+                {% if item[5] %}
+                    <div class="duracao">
+                        ⏱ Tempo de produção: {{ item[5] }}
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

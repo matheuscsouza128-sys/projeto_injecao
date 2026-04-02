@@ -36,6 +36,19 @@ def criar_banco():
 # 🔹 Garante que o banco existe ao iniciar
 criar_banco()
 
+def calcular_duracao(inicio_str, fim_str):
+    formato = "%d/%m/%Y %H:%M:%S"
+    inicio = datetime.strptime(inicio_str, formato)
+    fim = datetime.strptime(fim_str, formato)
+    duracao = fim - inicio
+
+    total_segundos = int(duracao.total_seconds())
+    horas = total_segundos // 3600
+    minutos = (total_segundos % 3600) // 60
+    segundos = total_segundos % 60
+
+    return f"{horas:02d}:{minutos:02d}:{segundos:02d}"
+
 # 🔹 Página inicial
 @app.route('/')
 def index():
@@ -73,7 +86,7 @@ def historico():
     cursor = conn.cursor()
 
     query = '''
-        SELECT maquina, operador, tipo, detalhe, data_hora
+        SELECT id, maquina, operador, tipo, detalhe, data_hora
         FROM apontamentos
         WHERE 1=1
     '''
@@ -90,9 +103,9 @@ def historico():
     query += ' ORDER BY id DESC'
 
     cursor.execute(query, params)
-    dados = cursor.fetchall()
+    dados_brutos = cursor.fetchall()
 
-    # listas para preencher filtros
+    # listas para filtros
     cursor.execute('SELECT DISTINCT maquina FROM apontamentos ORDER BY maquina')
     maquinas = [linha[0] for linha in cursor.fetchall()]
 
@@ -100,10 +113,33 @@ def historico():
     operadores = [linha[0] for linha in cursor.fetchall()]
 
     # resumo
-    total_registros = len(dados)
-    total_nc = sum(1 for item in dados if item[2] == "Não Conformidade")
-    total_intercorrencias = sum(1 for item in dados if item[2] == "Intercorrência")
-    total_pausas = sum(1 for item in dados if item[2] == "Pausa")
+    total_registros = len(dados_brutos)
+    total_nc = sum(1 for item in dados_brutos if item[3] == "Não Conformidade")
+    total_intercorrencias = sum(1 for item in dados_brutos if item[3] == "Intercorrência")
+    total_pausas = sum(1 for item in dados_brutos if item[3] == "Pausa")
+
+    # cálculo de duração por ciclo
+    ultimos_inicios = {}
+    dados = []
+
+    # inverter para processar cronologicamente
+    dados_ordenados = list(reversed(dados_brutos))
+
+    for item in dados_ordenados:
+        id_registro, maq, op, tipo, detalhe, data_hora = item
+        duracao = ""
+
+        if tipo == "Início de Produção":
+            ultimos_inicios[maq] = data_hora
+
+        elif tipo == "Fim de Produção" and maq in ultimos_inicios:
+            duracao = calcular_duracao(ultimos_inicios[maq], data_hora)
+            del ultimos_inicios[maq]
+
+        dados.append((maq, op, tipo, detalhe, data_hora, duracao))
+
+    # voltar para ordem decrescente na tela
+    dados.reverse()
 
     conn.close()
 
