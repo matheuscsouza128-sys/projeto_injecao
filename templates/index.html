@@ -44,6 +44,32 @@
             font-size: 1rem;
         }
 
+        .status-box {
+            background: #eef2ff;
+            color: #1e3a8a;
+            border: 1px solid #c7d2fe;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .status {
+            background: #ecfeff;
+            color: #155e75;
+            border: 1px solid #a5f3fc;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .erro {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
         .card {
             background: #ffffff;
             border-radius: 18px;
@@ -67,16 +93,7 @@
             border: 1px solid #cbd5e1;
             font-size: 1rem;
             background: #fff;
-        }
-
-        .status {
-            background: #ecfeff;
-            color: #155e75;
-            border: 1px solid #a5f3fc;
-            border-radius: 14px;
-            padding: 14px;
-            font-weight: bold;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .acoes {
@@ -118,6 +135,10 @@
             background: #374151;
         }
 
+        .btn-pausa {
+            background: #2563eb;
+        }
+
         .rodape {
             text-align: center;
             font-size: 0.9rem;
@@ -125,6 +146,12 @@
             margin-top: 24px;
         }
     </style>
+
+    <script>
+        function definirTipo(tipo) {
+            document.getElementById("tipo").value = tipo;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -133,14 +160,19 @@
             <p>Apontamento de produção</p>
         </div>
 
+        <div class="status-box">
+            Status atual da máquina: <strong>{{ status_maquina }}</strong>
+        </div>
+
         {% if status %}
-            <div class="status">
-                ✔ Último registro: {{ status }}
+            <div class="status {% if 'Erro' in status %}erro{% endif %}">
+                {{ status }}
             </div>
         {% endif %}
 
         <form action="/registrar" method="post">
             <input type="hidden" name="maquina" value="{{ maquina }}">
+            <input type="hidden" name="tipo" id="tipo" value="">
 
             <div class="card">
                 <label for="operador" class="label">Operador</label>
@@ -150,23 +182,65 @@
                     <option value="Maria">Maria</option>
                     <option value="Carlos">Carlos</option>
                 </select>
+
+                <label for="detalhe" class="label">Detalhe (se aplicável)</label>
+                <select name="detalhe" id="detalhe">
+                    <option value="">Selecione quando for NC, Intercorrência ou Pausa</option>
+
+                    <optgroup label="Não Conformidade">
+                        <option value="Dimensional">Dimensional</option>
+                        <option value="Material errado">Material errado</option>
+                        <option value="Sujeira / contaminação">Sujeira / contaminação</option>
+                        <option value="Defeito visual">Defeito visual</option>
+                        <option value="Máquina descalibrada">Máquina descalibrada</option>
+                        <option value="Rebarba excessiva">Rebarba excessiva</option>
+                        <option value="Peça incompleta">Peça incompleta</option>
+                        <option value="Cor fora do padrão">Cor fora do padrão</option>
+                        <option value="Bolha / falha de injeção">Bolha / falha de injeção</option>
+                        <option value="Outro">Outro</option>
+                    </optgroup>
+
+                    <optgroup label="Intercorrência">
+                        <option value="Falta de material">Falta de material</option>
+                        <option value="Falta de ferramenta">Falta de ferramenta</option>
+                        <option value="Setup / regulagem">Setup / regulagem</option>
+                        <option value="Manutenção">Manutenção</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Aguardando qualidade">Aguardando qualidade</option>
+                        <option value="Reunião técnica">Reunião técnica</option>
+                        <option value="Outro">Outro</option>
+                    </optgroup>
+
+                    <optgroup label="Pausa">
+                        <option value="Café">Café</option>
+                        <option value="Almoço">Almoço</option>
+                        <option value="Banheiro">Banheiro</option>
+                        <option value="Reunião geral">Reunião geral</option>
+                        <option value="Troca de turno">Troca de turno</option>
+                        <option value="Outro">Outro</option>
+                    </optgroup>
+                </select>
             </div>
 
             <div class="acoes">
-                <button type="submit" name="tipo" value="Início de Produção" class="btn-inicio">
+                <button type="submit" onclick="definirTipo('Início de Produção')" class="btn-inicio">
                     INICIAR PRODUÇÃO
                 </button>
 
-                <button type="submit" name="tipo" value="Fim de Produção" class="btn-fim">
+                <button type="submit" onclick="definirTipo('Fim de Produção')" class="btn-fim">
                     FINALIZAR PRODUÇÃO
                 </button>
 
-                <button type="submit" name="tipo" value="Intercorrência" class="btn-intercorrencia">
+                <button type="submit" onclick="definirTipo('Intercorrência')" class="btn-intercorrencia">
                     INTERCORRÊNCIA
                 </button>
 
-                <button type="submit" name="tipo" value="Não Conformidade" class="btn-nc">
+                <button type="submit" onclick="definirTipo('Não Conformidade')" class="btn-nc">
                     NÃO CONFORMIDADE
+                </button>
+
+                <button type="submit" onclick="definirTipo('Pausa')" class="btn-pausa">
+                    PAUSA
                 </button>
             </div>
         </form>
