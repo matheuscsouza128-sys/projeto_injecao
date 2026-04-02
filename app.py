@@ -73,6 +73,15 @@ def historico():
 
     return render_template('historico.html', dados=dados)
 
+@app.route('/limpar')
+def limpar():
+    conn = sqlite3.connect('banco.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM apontamentos')
+    conn.commit()
+    conn.close()
+    return "Histórico apagado com sucesso."
+
 # 🔹 Rodar aplicação
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

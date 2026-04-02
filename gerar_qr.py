@@ -8,4 +8,4 @@ for i in range(1, 11):
     img = qrcode.make(url)
     img.save(f"qr_maquina_{i}.png")
 
-print("QR Codes atualizados!")
+print("QR Codes gerados com sucesso!")
