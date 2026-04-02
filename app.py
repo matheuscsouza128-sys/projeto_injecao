@@ -63,18 +63,62 @@ def maquina(id_maquina):
         status_maquina=status_maquina
     )
 
-# 🔹 Histórico
+# 🔹 Histórico com filtros e resumo
 @app.route('/historico')
 def historico():
+    filtro_maquina = request.args.get('maquina', '')
+    filtro_operador = request.args.get('operador', '')
+
     conn = sqlite3.connect('banco.db')
     cursor = conn.cursor()
 
-    cursor.execute('SELECT maquina, operador, tipo, detalhe, data_hora FROM apontamentos ORDER BY id DESC')
+    query = '''
+        SELECT maquina, operador, tipo, detalhe, data_hora
+        FROM apontamentos
+        WHERE 1=1
+    '''
+    params = []
+
+    if filtro_maquina:
+        query += ' AND maquina = ?'
+        params.append(filtro_maquina)
+
+    if filtro_operador:
+        query += ' AND operador = ?'
+        params.append(filtro_operador)
+
+    query += ' ORDER BY id DESC'
+
+    cursor.execute(query, params)
     dados = cursor.fetchall()
+
+    # listas para preencher filtros
+    cursor.execute('SELECT DISTINCT maquina FROM apontamentos ORDER BY maquina')
+    maquinas = [linha[0] for linha in cursor.fetchall()]
+
+    cursor.execute('SELECT DISTINCT operador FROM apontamentos ORDER BY operador')
+    operadores = [linha[0] for linha in cursor.fetchall()]
+
+    # resumo
+    total_registros = len(dados)
+    total_nc = sum(1 for item in dados if item[2] == "Não Conformidade")
+    total_intercorrencias = sum(1 for item in dados if item[2] == "Intercorrência")
+    total_pausas = sum(1 for item in dados if item[2] == "Pausa")
 
     conn.close()
 
-    return render_template('historico.html', dados=dados)
+    return render_template(
+        'historico.html',
+        dados=dados,
+        maquinas=maquinas,
+        operadores=operadores,
+        filtro_maquina=filtro_maquina,
+        filtro_operador=filtro_operador,
+        total_registros=total_registros,
+        total_nc=total_nc,
+        total_intercorrencias=total_intercorrencias,
+        total_pausas=total_pausas
+    )
 
 # 🔹 Limpar histórico (temporário)
 @app.route('/limpar')

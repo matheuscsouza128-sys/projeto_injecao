@@ -1,21 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Histórico</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f4f6f8;
             margin: 0;
             padding: 20px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         h1 {
             margin-bottom: 20px;
         }
 
-        .card {
+        .filtros, .resumo {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .filtros {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .resumo {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .card-resumo {
+            background: white;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .card-resumo h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: #374151;
+        }
+
+        .card-resumo p {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+
+        .lista-card {
             background: white;
             padding: 15px;
             border-radius: 12px;
@@ -38,25 +82,113 @@
             color: #374151;
             font-style: italic;
         }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .botoes-filtro {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .btn-limpar {
+            background: #6b7280;
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .botoes-filtro {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>📊 Histórico de Apontamentos</h1>
 
-    <h1>📊 Histórico de Apontamentos</h1>
+        <form method="get" action="/historico" class="filtros">
+            <div>
+                <label><strong>Filtrar por máquina</strong></label>
+                <select name="maquina">
+                    <option value="">Todas</option>
+                    {% for maquina in maquinas %}
+                        <option value="{{ maquina }}" {% if filtro_maquina == maquina %}selected{% endif %}>{{ maquina }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    {% for item in dados %}
-        <div class="card">
-            <div class="linha"><strong>Máquina:</strong> {{ item[0] }}</div>
-            <div class="linha"><strong>Operador:</strong> {{ item[1] }}</div>
-            <div class="linha tipo">{{ item[2] }}</div>
+            <div>
+                <label><strong>Filtrar por operador</strong></label>
+                <select name="operador">
+                    <option value="">Todos</option>
+                    {% for operador in operadores %}
+                        <option value="{{ operador }}" {% if filtro_operador == operador %}selected{% endif %}>{{ operador }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            {% if item[3] %}
-                <div class="linha detalhe"><strong>Detalhe:</strong> {{ item[3] }}</div>
-            {% endif %}
+            <div class="botoes-filtro">
+                <button type="submit">Aplicar filtros</button>
+                <a href="/historico" class="btn-limpar">Limpar filtros</a>
+            </div>
+        </form>
 
-            <div class="linha">{{ item[4] }}</div>
+        <div class="resumo">
+            <div class="card-resumo">
+                <h3>Total de registros</h3>
+                <p>{{ total_registros }}</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Não Conformidades</h3>
+                <p>{{ total_nc }}</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Intercorrências</h3>
+                <p>{{ total_intercorrencias }}</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3>Pausas</h3>
+                <p>{{ total_pausas }}</p>
+            </div>
         </div>
-    {% endfor %}
 
+        {% for item in dados %}
+            <div class="lista-card">
+                <div class="linha"><strong>Máquina:</strong> {{ item[0] }}</div>
+                <div class="linha"><strong>Operador:</strong> {{ item[1] }}</div>
+                <div class="linha tipo">{{ item[2] }}</div>
+
+                {% if item[3] %}
+                    <div class="linha detalhe"><strong>Detalhe:</strong> {{ item[3] }}</div>
+                {% endif %}
+
+                <div class="linha">{{ item[4] }}</div>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
