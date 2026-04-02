@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 import sqlite3
 from datetime import datetime
 import os
+from collections import Counter
 
 app = Flask(__name__)
 
@@ -49,6 +50,12 @@ def calcular_duracao(inicio_str, fim_str):
 
     return f"{horas:02d}:{minutos:02d}:{segundos:02d}"
 
+def obter_mais_frequente(lista):
+    if not lista:
+        return ("-", 0)
+    contador = Counter(lista)
+    return contador.most_common(1)[0]
+
 # 🔹 Página inicial
 @app.route('/')
 def index():
@@ -76,7 +83,7 @@ def maquina(id_maquina):
         status_maquina=status_maquina
     )
 
-# 🔹 Histórico com filtros e resumo
+# 🔹 Histórico com filtros, resumo e rankings
 @app.route('/historico')
 def historico():
     filtro_maquina = request.args.get('maquina', '')
@@ -122,7 +129,6 @@ def historico():
     ultimos_inicios = {}
     dados = []
 
-    # inverter para processar cronologicamente
     dados_ordenados = list(reversed(dados_brutos))
 
     for item in dados_ordenados:
@@ -138,8 +144,26 @@ def historico():
 
         dados.append((maq, op, tipo, detalhe, data_hora, duracao))
 
-    # voltar para ordem decrescente na tela
     dados.reverse()
+
+    # rankings
+    maquinas_nc = [item[1] for item in dados_brutos if item[3] == "Não Conformidade"]
+    maquinas_inter = [item[1] for item in dados_brutos if item[3] == "Intercorrência"]
+
+    # cuidado: item[1] = maquina? não, na query é:
+    # item = (id, maquina, operador, tipo, detalhe, data_hora)
+    maquinas_nc = [item[1] for item in dados_brutos if item[3] == "Não Conformidade"]
+    maquinas_inter = [item[1] for item in dados_brutos if item[3] == "Intercorrência"]
+
+    causas_nc = [item[4] for item in dados_brutos if item[3] == "Não Conformidade" and item[4]]
+    causas_inter = [item[4] for item in dados_brutos if item[3] == "Intercorrência" and item[4]]
+    causas_pausa = [item[4] for item in dados_brutos if item[3] == "Pausa" and item[4]]
+
+    maquina_mais_nc, qtd_maquina_mais_nc = obter_mais_frequente(maquinas_nc)
+    maquina_mais_inter, qtd_maquina_mais_inter = obter_mais_frequente(maquinas_inter)
+    causa_mais_nc, qtd_causa_mais_nc = obter_mais_frequente(causas_nc)
+    causa_mais_inter, qtd_causa_mais_inter = obter_mais_frequente(causas_inter)
+    causa_mais_pausa, qtd_causa_mais_pausa = obter_mais_frequente(causas_pausa)
 
     conn.close()
 
@@ -153,7 +177,17 @@ def historico():
         total_registros=total_registros,
         total_nc=total_nc,
         total_intercorrencias=total_intercorrencias,
-        total_pausas=total_pausas
+        total_pausas=total_pausas,
+        maquina_mais_nc=maquina_mais_nc,
+        qtd_maquina_mais_nc=qtd_maquina_mais_nc,
+        maquina_mais_inter=maquina_mais_inter,
+        qtd_maquina_mais_inter=qtd_maquina_mais_inter,
+        causa_mais_nc=causa_mais_nc,
+        qtd_causa_mais_nc=qtd_causa_mais_nc,
+        causa_mais_inter=causa_mais_inter,
+        qtd_causa_mais_inter=qtd_causa_mais_inter,
+        causa_mais_pausa=causa_mais_pausa,
+        qtd_causa_mais_pausa=qtd_causa_mais_pausa
     )
 
 # 🔹 Limpar histórico (temporário)

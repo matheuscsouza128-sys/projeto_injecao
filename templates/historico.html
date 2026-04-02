@@ -14,7 +14,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -22,7 +22,7 @@
             margin-bottom: 20px;
         }
 
-        .filtros, .resumo {
+        .filtros, .resumo, .rankings {
             display: grid;
             gap: 12px;
             margin-bottom: 20px;
@@ -36,27 +36,34 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
-        .resumo {
+        .resumo, .rankings {
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         }
 
-        .card-resumo {
+        .card-resumo, .card-ranking {
             background: white;
             padding: 16px;
             border-radius: 14px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
-        .card-resumo h3 {
+        .card-resumo h3, .card-ranking h3 {
             margin: 0 0 8px;
             font-size: 1rem;
             color: #374151;
         }
 
-        .card-resumo p {
+        .card-resumo p, .card-ranking p {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             font-weight: bold;
+        }
+
+        .card-ranking span {
+            display: block;
+            margin-top: 6px;
+            color: #6b7280;
+            font-size: 0.95rem;
         }
 
         .lista-card {
@@ -182,6 +189,38 @@
             <div class="card-resumo">
                 <h3>Pausas</h3>
                 <p>{{ total_pausas }}</p>
+            </div>
+        </div>
+
+        <div class="rankings">
+            <div class="card-ranking">
+                <h3>Máquina com mais NC</h3>
+                <p>{{ maquina_mais_nc }}</p>
+                <span>{{ qtd_maquina_mais_nc }} ocorrência(s)</span>
+            </div>
+
+            <div class="card-ranking">
+                <h3>Máquina com mais intercorrências</h3>
+                <p>{{ maquina_mais_inter }}</p>
+                <span>{{ qtd_maquina_mais_inter }} ocorrência(s)</span>
+            </div>
+
+            <div class="card-ranking">
+                <h3>NC mais frequente</h3>
+                <p>{{ causa_mais_nc }}</p>
+                <span>{{ qtd_causa_mais_nc }} ocorrência(s)</span>
+            </div>
+
+            <div class="card-ranking">
+                <h3>Intercorrência mais frequente</h3>
+                <p>{{ causa_mais_inter }}</p>
+                <span>{{ qtd_causa_mais_inter }} ocorrência(s)</span>
+            </div>
+
+            <div class="card-ranking">
+                <h3>Pausa mais frequente</h3>
+                <p>{{ causa_mais_pausa }}</p>
+                <span>{{ qtd_causa_mais_pausa }} ocorrência(s)</span>
             </div>
         </div>
 
